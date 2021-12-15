@@ -1,4 +1,4 @@
-package frp
+package handler
 
 import (
 	"fmt"

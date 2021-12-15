@@ -10,9 +10,9 @@ import (
 	"github.com/webx-top/echo"
 	"github.com/webx-top/echo/param"
 
-	"github.com/admpub/nging/v4/application/library/config"
-
 	"github.com/nging-plugins/frpmanager/pkg/dbschema"
+	"github.com/nging-plugins/frpmanager/pkg/library/cmder"
+	"github.com/nging-plugins/frpmanager/pkg/library/utils"
 	"github.com/nging-plugins/frpmanager/pkg/model"
 )
 
@@ -71,14 +71,18 @@ func OnChangeBackendURL(ctx echo.Context) error {
 	if err != nil {
 		return err
 	}
+	cm, err := cmder.GetServer()
+	if err != nil {
+		return nil
+	}
 	for _, row := range c.Objects() {
-		err := config.DefaultCLIConfig.FRPSaveConfigFile(row)
+		err := utils.SaveConfigFile(row)
 		if err != nil {
 			log.Error(err)
 			continue
 		}
 		id := param.AsString(row.Id)
-		err = config.DefaultCLIConfig.FRPRestartID(id)
+		err = cm.RestartBy(id)
 		if err != nil {
 			log.Error(err)
 		}

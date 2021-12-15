@@ -19,6 +19,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -33,6 +34,12 @@ import (
 	"github.com/admpub/nging/v4/application/library/ipsimplefilter"
 
 	"github.com/nging-plugins/frpmanager/pkg/dbschema"
+)
+
+var (
+	ErrNoneDirectory      = errors.New(`No accessible directory`)
+	ErrBannedUser         = errors.New(`The current account has been disabled`)
+	ErrIPAddressIsBlocked = errors.New(`IP is blocked`)
 )
 
 func NewFrpUser(ctx echo.Context) *FrpUser {

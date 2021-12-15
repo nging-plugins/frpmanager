@@ -16,7 +16,7 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package frp
+package handler
 
 import (
 	"github.com/webx-top/echo"
@@ -24,7 +24,7 @@ import (
 	"github.com/admpub/nging/v4/application/handler"
 	"github.com/admpub/nging/v4/application/registry/perm"
 
-	"github.com/nging-plugins/frpmanager/pkg/dbschema"
+	ngingdbschema "github.com/admpub/nging/v4/application/dbschema"
 	_ "github.com/nging-plugins/frpmanager/pkg/handler/plugins/multiuser"
 	"github.com/nging-plugins/frpmanager/pkg/handler/proxy"
 )
@@ -76,7 +76,7 @@ func init() {
 func authDashboard(
 	h echo.Handler,
 	c echo.Context,
-	user *dbschema.NgingUser,
+	user *ngingdbschema.NgingUser,
 	permission *perm.RolePermission,
 ) (ppath string, returning bool, err error) {
 	ppath = `/frp/dashboard`

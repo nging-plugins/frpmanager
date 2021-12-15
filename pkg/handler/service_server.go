@@ -16,30 +16,34 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package frp
+package handler
 
 import (
 	"github.com/admpub/log"
 	"github.com/webx-top/echo"
 
-	"github.com/admpub/nging/v4/application/library/config"
 	"github.com/admpub/nging/v4/application/library/writer"
+	"github.com/nging-plugins/frpmanager/pkg/library/cmder"
 )
 
 func ServerRestart(ctx echo.Context) error {
+	cm, err := cmder.GetServer()
+	if err != nil {
+		return err
+	}
 	data := ctx.Data()
-	if err := config.DefaultCLIConfig.FRPStop(); err != nil {
+	if err := cm.Stop(); err != nil {
 		data.SetError(err)
 		return ctx.JSON(data)
 	}
-	if err := config.DefaultCLIConfig.FRPRebuildConfigFile(`frpserver`); err != nil {
+	if err := cm.RebuildConfigFile(`frpserver`); err != nil {
 		data.SetError(err)
 		return ctx.JSON(data)
 	}
 	buf := writer.NewShadow()
 	wOut := writer.NewOut(buf)
 	wErr := writer.NewErr(buf)
-	if err := config.DefaultCLIConfig.FRPStart(wOut, wErr); err != nil {
+	if err := cm.Start(wOut, wErr); err != nil {
 		data.SetError(err)
 		return ctx.JSON(data)
 	}
@@ -54,12 +58,16 @@ func ServerRestart(ctx echo.Context) error {
 }
 
 func ServerStop(ctx echo.Context) error {
+	cm, err := cmder.GetServer()
+	if err != nil {
+		return err
+	}
 	data := ctx.Data()
-	if err := config.DefaultCLIConfig.FRPStop(); err != nil {
+	if err := cm.Stop(); err != nil {
 		data.SetError(err)
 		return ctx.JSON(data)
 	}
-	if err := config.DefaultCLIConfig.FRPStopHistory(); err != nil {
+	if err := cm.StopHistory(); err != nil {
 		data.SetError(err)
 		return ctx.JSON(data)
 	}

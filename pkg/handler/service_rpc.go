@@ -1,7 +1,7 @@
 //go:build rpc
 // +build rpc
 
-package frp
+package handler
 
 import (
 	"context"

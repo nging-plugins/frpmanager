@@ -16,7 +16,7 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package frp
+package handler
 
 import (
 	"encoding/json"
@@ -36,6 +36,8 @@ import (
 	"github.com/admpub/nging/v4/application/library/config"
 
 	"github.com/nging-plugins/frpmanager/pkg/dbschema"
+	"github.com/nging-plugins/frpmanager/pkg/library/cmder"
+	"github.com/nging-plugins/frpmanager/pkg/library/utils"
 	"github.com/nging-plugins/frpmanager/pkg/model"
 )
 
@@ -74,9 +76,12 @@ func clientFormFilter(opts ...formfilter.Options) echo.FormDataFilter {
 }
 
 func ClientAdd(ctx echo.Context) error {
-	var err error
 	m := model.NewFrpClient(ctx)
 	user := handler.User(ctx)
+	cm, err := cmder.GetClient()
+	if err != nil {
+		return err
+	}
 	if ctx.IsPost() {
 		err = ctx.MustBind(m.NgingFrpClient, clientFormFilter())
 		if err == nil {
@@ -86,11 +91,11 @@ func ClientAdd(ctx echo.Context) error {
 			m.Uid = user.Id
 			_, err = m.Add()
 			if err == nil {
-				err = config.DefaultCLIConfig.FRPSaveConfigFile(m.NgingFrpClient)
+				err = utils.SaveConfigFile(m.NgingFrpClient)
 			}
 			if err == nil {
 				if m.Disabled == `N` {
-					err = config.DefaultCLIConfig.FRPClientStartID(m.NgingFrpClient.Id)
+					err = cm.StartBy(m.NgingFrpClient.Id)
 				}
 				if err != nil {
 					handler.SendOk(ctx, ctx.T(`保存成功。但启动失败: %v`, err.Error()))
@@ -129,7 +134,10 @@ func ClientAdd(ctx echo.Context) error {
 }
 
 func ClientEdit(ctx echo.Context) error {
-	var err error
+	cm, err := cmder.GetClient()
+	if err != nil {
+		return err
+	}
 	id := ctx.Formx(`id`).Uint()
 	m := model.NewFrpClient(ctx)
 	err = m.Get(nil, db.Cond{`id`: id})
@@ -148,15 +156,15 @@ func ClientEdit(ctx echo.Context) error {
 			m.Id = id
 			err = m.Edit(nil, db.Cond{`id`: id})
 			if err == nil {
-				err = config.DefaultCLIConfig.FRPSaveConfigFile(m.NgingFrpClient)
+				err = utils.SaveConfigFile(m.NgingFrpClient)
 			}
 			if err == nil {
 				var opType string
 				if m.Disabled == `N` {
-					err = config.DefaultCLIConfig.FRPClientRestartID(fmt.Sprintf(`%d`, m.Id))
+					err = cm.RestartBy(fmt.Sprintf(`%d`, m.Id))
 					opType = ctx.T(`启动失败`)
 				} else {
-					err = config.DefaultCLIConfig.FRPClientStopID(fmt.Sprintf(`%d`, m.Id))
+					err = cm.StopBy(fmt.Sprintf(`%d`, m.Id))
 					opType = ctx.T(`关闭失败`)
 				}
 				if err != nil {
@@ -177,18 +185,18 @@ func ClientEdit(ctx echo.Context) error {
 				data.SetError(err)
 				return ctx.JSON(data)
 			}
-			err = config.DefaultCLIConfig.FRPSaveConfigFile(m.NgingFrpClient)
+			err = utils.SaveConfigFile(m.NgingFrpClient)
 			if err != nil {
 				data.SetError(err)
 				return ctx.JSON(data)
 			}
 			var opType, status string
 			if m.Disabled == `N` {
-				err = config.DefaultCLIConfig.FRPClientRestartID(fmt.Sprintf(`%d`, m.NgingFrpClient.Id))
+				err = cm.RestartBy(fmt.Sprintf(`%d`, m.NgingFrpClient.Id))
 				opType = ctx.T(`启动失败`)
 				status = `started`
 			} else {
-				err = config.DefaultCLIConfig.FRPClientStopID(fmt.Sprintf(`%d`, m.NgingFrpClient.Id))
+				err = cm.StopBy(fmt.Sprintf(`%d`, m.NgingFrpClient.Id))
 				opType = ctx.T(`关闭失败`)
 				status = `stopped`
 			}
@@ -273,7 +281,7 @@ func ClientDelete(ctx echo.Context) error {
 	m := model.NewFrpClient(ctx)
 	err := m.Delete(nil, db.Cond{`id`: id})
 	if err == nil {
-		err = config.DefaultCLIConfig.FRPSaveConfigFile(&dbschema.NgingFrpClient{Disabled: `Y`, Id: id})
+		err = utils.SaveConfigFile(&dbschema.NgingFrpClient{Disabled: `Y`, Id: id})
 	}
 	if err == nil {
 		handler.SendOk(ctx, ctx.T(`操作成功`))

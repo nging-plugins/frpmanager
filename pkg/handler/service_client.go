@@ -16,7 +16,7 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package frp
+package handler
 
 import (
 	"regexp"
@@ -24,27 +24,31 @@ import (
 	"github.com/admpub/log"
 	"github.com/webx-top/echo"
 
-	"github.com/admpub/nging/v4/application/library/config"
 	"github.com/admpub/nging/v4/application/library/writer"
+	"github.com/nging-plugins/frpmanager/pkg/library/cmder"
 )
 
 // 清理信息： 2021/04/07 09:12:44 [W] [control.go:178] [1f3620ccf4f07b44]
 var cleanStartResult = regexp.MustCompile(`[\d]+/[\d]+/[\d]+ [\d]+:[\d]+:[\d]+ (\[[A-Z]\]) \[[\w-]+\.go:[\d]+\] \[[0-9a-z]+\] `)
 
 func ClientRestart(ctx echo.Context) error {
+	cm, err := cmder.GetClient()
+	if err != nil {
+		return err
+	}
 	data := ctx.Data()
-	if err := config.DefaultCLIConfig.FRPClientStop(); err != nil {
+	if err := cm.Stop(); err != nil {
 		data.SetError(err)
 		return ctx.JSON(data)
 	}
-	if err := config.DefaultCLIConfig.FRPRebuildConfigFile(`frpclient`); err != nil {
+	if err := cm.RebuildConfigFile(`frpclient`); err != nil {
 		data.SetError(err)
 		return ctx.JSON(data)
 	}
 	buf := writer.NewShadow()
 	wOut := writer.NewOut(buf)
 	wErr := writer.NewErr(buf)
-	if err := config.DefaultCLIConfig.FRPClientStart(wOut, wErr); err != nil {
+	if err := cm.Start(wOut, wErr); err != nil {
 		data.SetError(err)
 		return ctx.JSON(data)
 	}
@@ -62,12 +66,16 @@ func ClientRestart(ctx echo.Context) error {
 }
 
 func ClientStop(ctx echo.Context) error {
+	cm, err := cmder.GetClient()
+	if err != nil {
+		return err
+	}
 	data := ctx.Data()
-	if err := config.DefaultCLIConfig.FRPClientStop(); err != nil {
+	if err := cm.Stop(); err != nil {
 		data.SetError(err)
 		return ctx.JSON(data)
 	}
-	if err := config.DefaultCLIConfig.FRPClientStopHistory(); err != nil {
+	if err := cm.StopHistory(); err != nil {
 		data.SetError(err)
 		return ctx.JSON(data)
 	}

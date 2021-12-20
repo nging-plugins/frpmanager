@@ -1,8 +1,10 @@
 package cmder
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/admpub/confl"
 	"github.com/admpub/log"
@@ -112,7 +114,11 @@ func (c *Base) rebuildConfigFile(data interface{}, must bool, configFiles ...str
 		}
 	}
 	var b []byte
-	b, err = confl.Marshal(m)
+	if strings.HasSuffix(configFile, `.json`) {
+		b, err = json.MarshalIndent(m, ``, `  `)
+	} else {
+		b, err = confl.Marshal(m)
+	}
 	if err != nil {
 		log.Error(err.Error())
 		return

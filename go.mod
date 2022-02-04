@@ -14,7 +14,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/webx-top/com v0.3.6
 	github.com/webx-top/db v1.20.5
-	github.com/webx-top/echo v2.24.0+incompatible
+	github.com/webx-top/echo v2.24.1+incompatible
 )
 
 require (
@@ -115,6 +115,7 @@ require (
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/grandcat/zeroconf v1.0.0 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
+	github.com/h2non/filetype v1.1.3 // indirect
 	github.com/hashicorp/consul/api v1.12.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
@@ -189,7 +190,7 @@ require (
 	github.com/volatiletech/strmangle v0.0.1 // indirect
 	github.com/webx-top/captcha v0.0.1 // indirect
 	github.com/webx-top/chardet v0.0.1 // indirect
-	github.com/webx-top/client v0.5.0 // indirect
+	github.com/webx-top/client v0.6.6 // indirect
 	github.com/webx-top/codec v0.1.1 // indirect
 	github.com/webx-top/echo-prometheus v1.1.0 // indirect
 	github.com/webx-top/image v0.0.9 // indirect

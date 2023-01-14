@@ -294,7 +294,7 @@
 <div class="form-group mapping-addon" data-map-type="{{$v.Addon}}" id="addon-mapping-{{$v.Section}}">
   <label class="col-sm-2 control-label">{{$v.Section}}</label>
   <div class="col-sm-9">
-    <div class="fieldset bg-fc">{{Fetch (printf "frp/client/form/%s" $v.Addon) $v.Section}}</div>
+    <div class="fieldset bg-fc">{{$.Fetch (printf "frp/client/form/%s" $v.Addon) $v.Section}}</div>
   </div>
   <div class="col-sm-1">
   <a href="javascript:;" class="label label-danger extra-page-remove" onclick="removeMapping('{{$v.Section}}');" data-toggle="tooltip" title="{{"删除"|$.T}}"><i class="fa fa-times"></i></a>

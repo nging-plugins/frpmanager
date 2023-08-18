@@ -340,6 +340,7 @@
     </div>
 </div>
 </script>
+<script src="{{AssetsURL}}/js/textarea/editor.min.js?t={{BuildTime}}"></script>
 <script>
 function addKVs(obj,k,v){
   var tmpl=$('#tmplAddVariableRow').html();
@@ -396,7 +397,7 @@ $('.connect-type').on('click',function(){
 if($('.connect-type:checked').val()!=$('#connect-settings').data('type')){
   $('.connect-type:checked').trigger('click');
 }
-App.attachInsertableCode()
+App.attachInsertableCode({posStartChar:'='})
 App.searchFS('#logFile',20);
 });
 </script>

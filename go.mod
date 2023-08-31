@@ -7,7 +7,7 @@ replace github.com/admpub/nging/v5 => ../../admpub/nging
 require (
 	github.com/admpub/confl v0.2.4
 	github.com/admpub/events v1.3.5
-	github.com/admpub/frp v0.37.2
+	github.com/admpub/frp v0.37.3
 	github.com/admpub/log v1.3.6
 	github.com/admpub/nging/v5 v5.0.0-00010101000000-000000000000
 	github.com/admpub/once v0.0.1

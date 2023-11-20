@@ -1,5 +1,5 @@
-//go:build rpc
-// +build rpc
+//go:build frpRPC
+// +build frpRPC
 
 package handler
 
@@ -11,8 +11,8 @@ import (
 	"github.com/webx-top/db"
 	"github.com/webx-top/echo"
 
-	"github.com/admpub/nging/v5/application/library/rpc"
 	"github.com/admpub/nging/v5/application/model"
+	rpc "github.com/coscms/rpcxx"
 
 	_ "github.com/nging-plugins/frpmanager/application/library/frp/rpcservice"
 )

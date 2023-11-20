@@ -10,7 +10,7 @@ import (
 	"github.com/admpub/frp/server"
 	"github.com/webx-top/echo"
 
-	"github.com/admpub/nging/v5/application/library/rpc"
+	rpc "github.com/coscms/rpcxx"
 )
 
 var (

@@ -1,5 +1,5 @@
-//go:build rpc
-// +build rpc
+//go:build frpRPC
+// +build frpRPC
 
 package model
 
@@ -7,7 +7,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/admpub/nging/v5/application/library/rpc"
+	rpc "github.com/coscms/rpcxx"
 )
 
 func (f *FrpClient) CallRPC(ctx context.Context, serviceMethod string, args interface{}, reply interface{}) error {

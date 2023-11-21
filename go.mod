@@ -15,7 +15,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/webx-top/com v1.2.9
 	github.com/webx-top/db v1.27.1
-	github.com/webx-top/echo v2.42.6+incompatible
+	github.com/webx-top/echo v2.42.7+incompatible
 )
 
 require (

@@ -56,6 +56,9 @@ func (c *FRPClient) StopHistory(ids ...string) error {
 		}
 		return os.Remove(pidPath)
 	})
+	if err != nil && os.IsNotExist(err) {
+		return nil
+	}
 	return err
 }
 

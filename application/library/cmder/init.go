@@ -6,6 +6,7 @@ import (
 	"github.com/admpub/nging/v5/application/initialize/backend"
 	"github.com/admpub/nging/v5/application/library/common"
 	"github.com/admpub/nging/v5/application/library/config"
+	"github.com/webx-top/echo"
 )
 
 func onServerConfigChange(file string) error {
@@ -38,13 +39,13 @@ func onClientConfigChange(file string) error {
 
 func init() {
 	backend.OnConfigChange(func(filePath string) (err error) {
-		if strings.Contains(filePath, `/frp/server/`) {
+		if strings.Contains(filePath, echo.FilePathSeparator+`frp`+echo.FilePathSeparator+`server`+echo.FilePathSeparator) {
 			err = onServerConfigChange(filePath)
 		}
 		return
 	})
 	backend.OnConfigChange(func(filePath string) (err error) {
-		if strings.Contains(filePath, `/frp/client/`) {
+		if strings.Contains(filePath, echo.FilePathSeparator+`frp`+echo.FilePathSeparator+`client`+echo.FilePathSeparator) {
 			err = onClientConfigChange(filePath)
 		}
 		return

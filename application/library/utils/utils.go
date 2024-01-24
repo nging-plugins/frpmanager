@@ -27,7 +27,7 @@ func ConfigFile(id uint, isServer bool) string {
 	configFile = filepath.Join(config.FromCLI().ConfDir(), `frp`, configFile)
 	err := os.MkdirAll(configFile, os.ModePerm)
 	if err != nil {
-		log.Error(err)
+		log.Errorf(`failed to os.MkdirAll(%q): %v`, configFile, err)
 	}
 	return filepath.Join(configFile, fmt.Sprintf(`%d`, id)+FRPConfigExtension)
 }
@@ -40,7 +40,7 @@ func PidFile(id string, isServer bool) string {
 	pidFile = filepath.Join(echo.Wd(), `data/pid/frp`, pidFile)
 	err := os.MkdirAll(pidFile, os.ModePerm)
 	if err != nil {
-		log.Error(err)
+		log.Errorf(`failed to os.MkdirAll(%q): %v`, pidFile, err)
 	}
 	return filepath.Join(pidFile, id+`.pid`)
 }

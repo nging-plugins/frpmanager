@@ -78,13 +78,13 @@ func OnChangeBackendURL(ctx echo.Context) error {
 	for _, row := range c.Objects() {
 		err := utils.SaveConfigFile(row)
 		if err != nil {
-			log.Error(err)
+			log.Errorf(`failed to frp.plugins.multiuser.SaveConfigFile(%+v): %v`, row, err)
 			continue
 		}
 		id := param.AsString(row.Id)
 		err = cm.RestartBy(id)
 		if err != nil {
-			log.Error(err)
+			log.Errorf(`failed to frpserver.RestartBy(%v): %v`, id, err)
 		}
 	}
 	return nil

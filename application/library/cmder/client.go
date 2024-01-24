@@ -1,12 +1,12 @@
 package cmder
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/admpub/log"
@@ -77,8 +77,8 @@ func (c *FRPClient) StartBy(id uint, writer ...io.Writer) (err error) {
 
 func (c *FRPClient) Start(writer ...io.Writer) (err error) {
 	err = c.StopHistory()
-	if err != nil {
-		log.Error(err.Error())
+	if err != nil && !errors.Is(err, os.ErrProcessDone) {
+		log.Errorf(`failed to frpclient.StopHistory: %v`, err.Error())
 	}
 	md := dbschema.NewNgingFrpClient(nil)
 	cd := db.And(
@@ -128,12 +128,12 @@ func (c *FRPClient) RestartBy(id string, writer ...io.Writer) error {
 
 func (c *FRPClient) StopBy(id string) error {
 	err := c.CLIConfig.CmdStop("frpclient." + id)
-	if err != nil && !strings.Contains(err.Error(), `finished`) {
+	if err != nil {
 		return err
 	}
 	pidPath := c.PidFile(id, false)
 	err = com.CloseProcessFromPidFile(pidPath)
-	if err != nil && !strings.Contains(err.Error(), `finished`) {
+	if err != nil {
 		log.Error(err.Error() + `: ` + pidPath)
 	}
 	return nil

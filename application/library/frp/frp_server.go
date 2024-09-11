@@ -36,10 +36,9 @@ import (
 	"github.com/admpub/frp/pkg/util/util"
 	"github.com/admpub/frp/server"
 
-	"github.com/admpub/nging/v5/application/library/common"
+	"github.com/coscms/webcore/library/common"
 
 	"github.com/nging-plugins/frpmanager/application/dbschema"
-
 )
 
 func SetServerConfigFromDB(conf *dbschema.NgingFrpServer) *config.ServerCommonConf {

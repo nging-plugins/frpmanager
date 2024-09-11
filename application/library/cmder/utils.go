@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/admpub/nging/v5/application/library/config/cmder"
+	"github.com/coscms/webcore/library/config/cmder"
 )
 
 var (

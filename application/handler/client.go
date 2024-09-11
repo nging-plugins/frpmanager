@@ -32,9 +32,9 @@ import (
 	"github.com/webx-top/echo/code"
 	"github.com/webx-top/echo/formfilter"
 
-	"github.com/admpub/nging/v5/application/handler"
-	"github.com/admpub/nging/v5/application/library/common"
-	"github.com/admpub/nging/v5/application/library/config"
+	"github.com/coscms/webcore/library/backend"
+	"github.com/coscms/webcore/library/common"
+	"github.com/coscms/webcore/library/config"
 
 	"github.com/nging-plugins/frpmanager/application/dbschema"
 	"github.com/nging-plugins/frpmanager/application/library/cmder"
@@ -54,7 +54,7 @@ func ClientIndex(ctx echo.Context) error {
 		cond.AddKV(`name`, db.Like(`%`+q+`%`))
 	}
 	var clientAndGroup []*model.FrpClientAndGroup
-	_, err := handler.PagingWithLister(ctx, handler.NewLister(m, &clientAndGroup, func(r db.Result) db.Result {
+	_, err := common.PagingWithLister(ctx, common.NewLister(m, &clientAndGroup, func(r db.Result) db.Result {
 		return r.OrderBy(`-id`)
 	}, cond.And()))
 	for k, u := range clientAndGroup {
@@ -68,7 +68,7 @@ func ClientIndex(ctx echo.Context) error {
 	ctx.Set(`groupList`, groupList)
 	ctx.Set(`groupId`, groupId)
 	ctx.Set(`isRunning`, config.FromCLI().CmdHasGroup(`frpclient`))
-	return ctx.Render(`frp/client_index`, handler.Err(ctx, err))
+	return ctx.Render(`frp/client_index`, common.Err(ctx, err))
 }
 
 func clientFormFilter(opts ...formfilter.Options) echo.FormDataFilter {
@@ -78,7 +78,7 @@ func clientFormFilter(opts ...formfilter.Options) echo.FormDataFilter {
 
 func ClientAdd(ctx echo.Context) error {
 	m := model.NewFrpClient(ctx)
-	user := handler.User(ctx)
+	user := backend.User(ctx)
 	cm, err := cmder.GetClient()
 	if err != nil {
 		return err
@@ -103,11 +103,11 @@ func ClientAdd(ctx echo.Context) error {
 					err = cm.StartBy(m.NgingFrpClient.Id)
 				}
 				if err != nil {
-					handler.SendOk(ctx, ctx.T(`保存成功。但启动失败: %v`, err.Error()))
+					common.SendOk(ctx, ctx.T(`保存成功。但启动失败: %v`, err.Error()))
 				} else {
-					handler.SendOk(ctx, ctx.T(`操作成功`))
+					common.SendOk(ctx, ctx.T(`操作成功`))
 				}
-				return ctx.Redirect(handler.URLFor(`/frp/client_index`))
+				return ctx.Redirect(backend.URLFor(`/frp/client_index`))
 			}
 		}
 	} else {
@@ -177,11 +177,11 @@ func ClientEdit(ctx echo.Context) error {
 					opType = ctx.T(`关闭失败`)
 				}
 				if err != nil {
-					handler.SendOk(ctx, ctx.T(`保存成功。但%s: %v`, opType, err.Error()))
+					common.SendOk(ctx, ctx.T(`保存成功。但%s: %v`, opType, err.Error()))
 				} else {
-					handler.SendOk(ctx, ctx.T(`操作成功`))
+					common.SendOk(ctx, ctx.T(`操作成功`))
 				}
-				return ctx.Redirect(handler.URLFor(`/frp/client_index`))
+				return ctx.Redirect(backend.URLFor(`/frp/client_index`))
 			}
 		}
 	} else if ctx.IsAjax() {
@@ -296,12 +296,12 @@ func ClientDelete(ctx echo.Context) error {
 		err = utils.SaveConfigFile(&dbschema.NgingFrpClient{Disabled: `Y`, Id: id})
 	}
 	if err == nil {
-		handler.SendOk(ctx, ctx.T(`操作成功`))
+		common.SendOk(ctx, ctx.T(`操作成功`))
 	} else {
-		handler.SendFail(ctx, err.Error())
+		common.SendFail(ctx, err.Error())
 	}
 
-	return ctx.Redirect(handler.URLFor(`/frp/client_index`))
+	return ctx.Redirect(backend.URLFor(`/frp/client_index`))
 }
 
 func ClientLog(ctx echo.Context) error {

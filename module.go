@@ -1,8 +1,8 @@
 package frpmanager
 
 import (
-	"github.com/admpub/nging/v5/application/library/config/cmder"
-	"github.com/admpub/nging/v5/application/library/module"
+	"github.com/coscms/webcore/library/config/cmder"
+	"github.com/coscms/webcore/library/module"
 
 	"github.com/nging-plugins/frpmanager/application/handler"
 	pluginCmder "github.com/nging-plugins/frpmanager/application/library/cmder"

@@ -9,7 +9,7 @@ import (
 
 	"github.com/admpub/confl"
 	"github.com/admpub/log"
-	"github.com/admpub/nging/v5/application/library/config"
+	"github.com/coscms/webcore/library/config"
 	"github.com/webx-top/com"
 	"github.com/webx-top/echo"
 

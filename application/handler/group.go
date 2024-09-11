@@ -19,18 +19,18 @@
 package handler
 
 import (
+	"github.com/coscms/webcore/library/backend"
+	"github.com/coscms/webcore/library/common"
 	"github.com/webx-top/db"
 	"github.com/webx-top/echo"
-
-	"github.com/admpub/nging/v5/application/handler"
 
 	"github.com/nging-plugins/frpmanager/application/model"
 )
 
 func GroupIndex(ctx echo.Context) error {
 	m := model.NewFrpGroup(ctx)
-	_, err := handler.PagingWithLister(ctx, m)
-	ret := handler.Err(ctx, err)
+	_, err := common.PagingWithLister(ctx, m)
+	ret := common.Err(ctx, err)
 	ctx.Set(`listData`, m.Objects())
 	return ctx.Render(`frp/group_index`, ret)
 }
@@ -52,8 +52,8 @@ func GroupAdd(ctx echo.Context) error {
 		if err == nil {
 			_, err = m.Insert()
 			if err == nil {
-				handler.SendOk(ctx, ctx.T(`操作成功`))
-				return ctx.Redirect(handler.URLFor(`/frp/group_index`))
+				common.SendOk(ctx, ctx.T(`操作成功`))
+				return ctx.Redirect(backend.URLFor(`/frp/group_index`))
 			}
 		}
 	} else {
@@ -92,8 +92,8 @@ func GroupEdit(ctx echo.Context) error {
 			m.Id = id
 			err = m.Update(nil, db.Cond{`id`: id})
 			if err == nil {
-				handler.SendOk(ctx, ctx.T(`操作成功`))
-				return ctx.Redirect(handler.URLFor(`/frp/group_index`))
+				common.SendOk(ctx, ctx.T(`操作成功`))
+				return ctx.Redirect(backend.URLFor(`/frp/group_index`))
 			}
 		}
 	} else if err == nil {
@@ -109,10 +109,10 @@ func GroupDelete(ctx echo.Context) error {
 	m := model.NewFrpGroup(ctx)
 	err := m.Delete(nil, db.Cond{`id`: id})
 	if err == nil {
-		handler.SendOk(ctx, ctx.T(`操作成功`))
+		common.SendOk(ctx, ctx.T(`操作成功`))
 	} else {
-		handler.SendFail(ctx, err.Error())
+		common.SendFail(ctx, err.Error())
 	}
 
-	return ctx.Redirect(handler.URLFor(`/frp/group_index`))
+	return ctx.Redirect(backend.URLFor(`/frp/group_index`))
 }

@@ -7,10 +7,10 @@ import (
 	"github.com/admpub/log"
 	"github.com/webx-top/echo"
 
-	"github.com/admpub/nging/v5/application/cmd/bootconfig"
-	"github.com/admpub/nging/v5/application/handler"
-	"github.com/admpub/nging/v5/application/library/common"
-	"github.com/admpub/nging/v5/application/library/config"
+	"github.com/coscms/webcore/cmd/bootconfig"
+	"github.com/coscms/webcore/library/common"
+	"github.com/coscms/webcore/library/config"
+	"github.com/coscms/webcore/library/route"
 	"github.com/nging-plugins/frpmanager/application/library/frp"
 )
 
@@ -50,7 +50,7 @@ func init() {
 		}()
 		return nil
 	})
-	handler.Register(func(g echo.RouteRegister) {
+	route.Register(func(g echo.RouteRegister) {
 		g.Post(`/frp_login`, Login)
 	})
 }

@@ -30,9 +30,9 @@ import (
 	"github.com/webx-top/echo/formfilter"
 	"github.com/webx-top/echo/param"
 
-	"github.com/admpub/nging/v5/application/handler"
-	"github.com/admpub/nging/v5/application/library/common"
-	"github.com/admpub/nging/v5/application/library/config"
+	"github.com/coscms/webcore/library/backend"
+	"github.com/coscms/webcore/library/common"
+	"github.com/coscms/webcore/library/config"
 
 	"github.com/nging-plugins/frpmanager/application/dbschema"
 	"github.com/nging-plugins/frpmanager/application/library/cmder"
@@ -50,7 +50,7 @@ func ServerIndex(ctx echo.Context) error {
 	}
 	common.SelectPageCond(ctx, &cond)
 	var serverAndGroup []*model.FrpServerAndGroup
-	_, err := handler.PagingWithLister(ctx, handler.NewLister(m, &serverAndGroup, func(r db.Result) db.Result {
+	_, err := common.PagingWithLister(ctx, common.NewLister(m, &serverAndGroup, func(r db.Result) db.Result {
 		return r.OrderBy(`-id`)
 	}, cond.And()))
 	for k, u := range serverAndGroup {
@@ -64,7 +64,7 @@ func ServerIndex(ctx echo.Context) error {
 	ctx.Set(`groupList`, groupList)
 	ctx.Set(`groupId`, groupId)
 	ctx.Set(`isRunning`, config.FromCLI().CmdHasGroup(`frpserver`))
-	return ctx.Render(`frp/server_index`, handler.Err(ctx, err))
+	return ctx.Render(`frp/server_index`, common.Err(ctx, err))
 }
 
 func serverFormFilter(opts ...formfilter.Options) echo.FormDataFilter {
@@ -80,7 +80,7 @@ func ServerAdd(ctx echo.Context) error {
 		return err
 	}
 	m := model.NewFrpServer(ctx)
-	user := handler.User(ctx)
+	user := backend.User(ctx)
 	if ctx.IsPost() {
 		err = ctx.MustBind(m.NgingFrpServer, serverFormFilter())
 		if err == nil {
@@ -94,11 +94,11 @@ func ServerAdd(ctx echo.Context) error {
 					err = cm.StartBy(m.NgingFrpServer.Id)
 				}
 				if err != nil {
-					handler.SendOk(ctx, ctx.T(`保存成功。但启动失败: %v`, err.Error()))
+					common.SendOk(ctx, ctx.T(`保存成功。但启动失败: %v`, err.Error()))
 				} else {
-					handler.SendOk(ctx, ctx.T(`操作成功`))
+					common.SendOk(ctx, ctx.T(`操作成功`))
 				}
-				return ctx.Redirect(handler.URLFor(`/frp/server_index`))
+				return ctx.Redirect(backend.URLFor(`/frp/server_index`))
 			}
 		}
 	} else {
@@ -171,11 +171,11 @@ func ServerEdit(ctx echo.Context) error {
 					opType = ctx.T(`关闭失败`)
 				}
 				if err != nil {
-					handler.SendOk(ctx, ctx.T(`保存成功。但%s: %v`, opType, err.Error()))
+					common.SendOk(ctx, ctx.T(`保存成功。但%s: %v`, opType, err.Error()))
 				} else {
-					handler.SendOk(ctx, ctx.T(`操作成功`))
+					common.SendOk(ctx, ctx.T(`操作成功`))
 				}
-				return ctx.Redirect(handler.URLFor(`/frp/server_index`))
+				return ctx.Redirect(backend.URLFor(`/frp/server_index`))
 			}
 		}
 	} else if ctx.IsAjax() {
@@ -253,12 +253,12 @@ func ServerDelete(ctx echo.Context) error {
 		err = utils.SaveConfigFile(&dbschema.NgingFrpServer{Disabled: `Y`, Id: id})
 	}
 	if err == nil {
-		handler.SendOk(ctx, ctx.T(`操作成功`))
+		common.SendOk(ctx, ctx.T(`操作成功`))
 	} else {
-		handler.SendFail(ctx, err.Error())
+		common.SendFail(ctx, err.Error())
 	}
 
-	return ctx.Redirect(handler.URLFor(`/frp/server_index`))
+	return ctx.Redirect(backend.URLFor(`/frp/server_index`))
 }
 
 func ServerLog(ctx echo.Context) error {

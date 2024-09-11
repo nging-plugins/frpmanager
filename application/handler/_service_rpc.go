@@ -11,8 +11,8 @@ import (
 	"github.com/webx-top/db"
 	"github.com/webx-top/echo"
 
-	"github.com/admpub/nging/v5/application/model"
 	rpc "github.com/coscms/rpcxx"
+	"github.com/coscms/webcore/model"
 
 	_ "github.com/nging-plugins/frpmanager/application/library/frp/rpcservice"
 )

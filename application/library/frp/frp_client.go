@@ -21,8 +21,8 @@ import (
 	"github.com/webx-top/com"
 	"github.com/webx-top/echo"
 
-	"github.com/admpub/nging/v5/application/library/common"
-	
+	"github.com/coscms/webcore/library/common"
+
 	"github.com/nging-plugins/frpmanager/application/dbschema"
 )
 

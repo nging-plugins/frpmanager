@@ -21,11 +21,10 @@ package handler
 import (
 	"github.com/webx-top/echo"
 
-	"github.com/admpub/nging/v5/application/handler"
-	"github.com/admpub/nging/v5/application/registry/perm"
+	"github.com/coscms/webcore/registry/perm"
 
-	ngingdbschema "github.com/admpub/nging/v5/application/dbschema"
-	"github.com/admpub/nging/v5/application/library/route"
+	ngingdbschema "github.com/coscms/webcore/dbschema"
+	"github.com/coscms/webcore/library/route"
 	_ "github.com/nging-plugins/frpmanager/application/handler/plugins/multiuser"
 	"github.com/nging-plugins/frpmanager/application/handler/proxy"
 )
@@ -47,7 +46,7 @@ func RegisterRoute(r *route.Collection) {
 }
 
 func registerRoute(g echo.RouteRegister) {
-	metaHandler := handler.IRegister().MetaHandler
+	metaHandler := route.IRegister().MetaHandler
 	g.Route(`GET,POST`, `/server_index`, ServerIndex)
 	g.Route(`GET,POST`, `/server_add`, ServerAdd)
 	g.Route(`GET,POST`, `/server_edit`, ServerEdit)

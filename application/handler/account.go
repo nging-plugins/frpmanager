@@ -21,12 +21,12 @@ package handler
 import (
 	"time"
 
+	"github.com/coscms/webcore/library/backend"
+	"github.com/coscms/webcore/library/common"
 	"github.com/webx-top/db"
 	"github.com/webx-top/echo"
 	"github.com/webx-top/echo/code"
 	"github.com/webx-top/echo/formfilter"
-
-	"github.com/admpub/nging/v5/application/handler"
 
 	"github.com/nging-plugins/frpmanager/application/model"
 )
@@ -35,11 +35,11 @@ func AccountIndex(ctx echo.Context) error {
 	m := model.NewFrpUser(ctx)
 	cond := db.NewCompounds()
 	list := []*model.FrpUserAndServer{}
-	_, err := handler.PagingWithLister(ctx, handler.NewLister(m, &list, func(r db.Result) db.Result {
+	_, err := common.PagingWithLister(ctx, common.NewLister(m, &list, func(r db.Result) db.Result {
 		return r.OrderBy(`-id`)
 	}, cond.And()))
 	ctx.Set(`listData`, list)
-	return ctx.Render(`frp/account`, handler.Err(ctx, err))
+	return ctx.Render(`frp/account`, common.Err(ctx, err))
 }
 
 func accountFormFilter(opts ...formfilter.Options) echo.FormDataFilter {
@@ -53,7 +53,7 @@ func accountFormFilter(opts ...formfilter.Options) echo.FormDataFilter {
 func AccountAdd(ctx echo.Context) error {
 	var err error
 	m := model.NewFrpUser(ctx)
-	user := handler.User(ctx)
+	user := backend.User(ctx)
 	if ctx.IsPost() {
 		if ctx.Form(`confirmPassword`) != ctx.Form(`password`) {
 			err = ctx.E(`两次输入的密码之间不匹配，请输入一样的密码`)
@@ -66,8 +66,8 @@ func AccountAdd(ctx echo.Context) error {
 			m.Uid = user.Id
 			_, err = m.Add()
 			if err == nil {
-				handler.SendOk(ctx, ctx.T(`操作成功`))
-				return ctx.Redirect(handler.URLFor(`/frp/account`))
+				common.SendOk(ctx, ctx.T(`操作成功`))
+				return ctx.Redirect(backend.URLFor(`/frp/account`))
 			}
 		}
 	} else {
@@ -124,8 +124,8 @@ func AccountEdit(ctx echo.Context) error {
 			m.Id = id
 			err = m.Edit(nil, db.Cond{`id`: id})
 			if err == nil {
-				handler.SendOk(ctx, ctx.T(`操作成功`))
-				return ctx.Redirect(handler.URLFor(`/frp/account`))
+				common.SendOk(ctx, ctx.T(`操作成功`))
+				return ctx.Redirect(backend.URLFor(`/frp/account`))
 			}
 		}
 	} else {
@@ -155,10 +155,10 @@ func AccountDelete(ctx echo.Context) error {
 	m := model.NewFrpUser(ctx)
 	err := m.Delete(nil, db.Cond{`id`: id})
 	if err == nil {
-		handler.SendOk(ctx, ctx.T(`操作成功`))
+		common.SendOk(ctx, ctx.T(`操作成功`))
 	} else {
-		handler.SendFail(ctx, err.Error())
+		common.SendFail(ctx, err.Error())
 	}
 
-	return ctx.Redirect(handler.URLFor(`/frp/account`))
+	return ctx.Redirect(backend.URLFor(`/frp/account`))
 }

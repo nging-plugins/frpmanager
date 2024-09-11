@@ -25,6 +25,7 @@ import (
 
 	ngingdbschema "github.com/coscms/webcore/dbschema"
 	"github.com/coscms/webcore/library/route"
+	routeRegistry "github.com/coscms/webcore/registry/route"
 	_ "github.com/nging-plugins/frpmanager/application/handler/plugins/multiuser"
 	"github.com/nging-plugins/frpmanager/application/handler/proxy"
 )
@@ -46,7 +47,7 @@ func RegisterRoute(r *route.Collection) {
 }
 
 func registerRoute(g echo.RouteRegister) {
-	metaHandler := route.IRegister().MetaHandler
+	metaHandler := routeRegistry.IRegister().MetaHandler
 	g.Route(`GET,POST`, `/server_index`, ServerIndex)
 	g.Route(`GET,POST`, `/server_add`, ServerAdd)
 	g.Route(`GET,POST`, `/server_edit`, ServerEdit)

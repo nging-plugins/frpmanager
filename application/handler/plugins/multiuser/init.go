@@ -10,7 +10,7 @@ import (
 	"github.com/coscms/webcore/cmd/bootconfig"
 	"github.com/coscms/webcore/library/common"
 	"github.com/coscms/webcore/library/config"
-	"github.com/coscms/webcore/library/route"
+	routeRegistry "github.com/coscms/webcore/registry/route"
 	"github.com/nging-plugins/frpmanager/application/library/frp"
 )
 
@@ -50,7 +50,7 @@ func init() {
 		}()
 		return nil
 	})
-	route.Register(func(g echo.RouteRegister) {
+	routeRegistry.Register(func(g echo.RouteRegister) {
 		g.Post(`/frp_login`, Login)
 	})
 }

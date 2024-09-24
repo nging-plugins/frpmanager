@@ -21,18 +21,18 @@ package handler
 import (
 	"github.com/webx-top/echo"
 
+	"github.com/coscms/webcore/library/module"
 	"github.com/coscms/webcore/registry/perm"
 
 	ngingdbschema "github.com/coscms/webcore/dbschema"
-	"github.com/coscms/webcore/library/route"
 	routeRegistry "github.com/coscms/webcore/registry/route"
 	_ "github.com/nging-plugins/frpmanager/application/handler/plugins/multiuser"
 	"github.com/nging-plugins/frpmanager/application/handler/proxy"
 )
 
-func RegisterRoute(r *route.Collection) {
-	r.Backend.RegisterToGroup(`/frp`, registerRoute)
-	r.Backend.RegisterToGroup(`/frp/dashboard`, func(g echo.RouteRegister) {
+func RegisterRoute(r module.Router) {
+	r.Backend().RegisterToGroup(`/frp`, registerRoute)
+	r.Backend().RegisterToGroup(`/frp/dashboard`, func(g echo.RouteRegister) {
 		g.Get(`/server/:id`, ServerDashboard)
 		g.Get(`/client/:id`, ClientDashboard)
 

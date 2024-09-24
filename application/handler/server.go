@@ -33,6 +33,8 @@ import (
 	"github.com/coscms/webcore/library/backend"
 	"github.com/coscms/webcore/library/common"
 	"github.com/coscms/webcore/library/config"
+	"github.com/coscms/webcore/library/nlog"
+	"github.com/coscms/webcore/library/nsql"
 
 	"github.com/nging-plugins/frpmanager/application/dbschema"
 	"github.com/nging-plugins/frpmanager/application/library/cmder"
@@ -48,7 +50,7 @@ func ServerIndex(ctx echo.Context) error {
 	if groupId > 0 {
 		cond.AddKV(`group_id`, groupId)
 	}
-	common.SelectPageCond(ctx, &cond)
+	nsql.SelectPageCond(ctx, &cond)
 	var serverAndGroup []*model.FrpServerAndGroup
 	_, err := common.PagingWithLister(ctx, common.NewLister(m, &serverAndGroup, func(r db.Result) db.Result {
 		return r.OrderBy(`-id`)
@@ -275,5 +277,5 @@ func ServerLog(ctx echo.Context) error {
 		}
 		return ctx.JSON(ctx.Data().SetError(err))
 	}
-	return common.LogShow(ctx, common.OSAbsPath(m.LogFile), echo.H{`title`: m.Name})
+	return nlog.LogShow(ctx, common.OSAbsPath(m.LogFile), echo.H{`title`: m.Name})
 }

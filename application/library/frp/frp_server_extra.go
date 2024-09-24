@@ -7,7 +7,7 @@ import (
 
 	plugin "github.com/admpub/frp/pkg/plugin/server"
 	frpLog "github.com/admpub/frp/pkg/util/log"
-	"github.com/coscms/webcore/library/common"
+	"github.com/coscms/webcore/library/nerrors"
 )
 
 func NewServerConfigExtra() *ServerConfigExtra {
@@ -28,14 +28,14 @@ func (s *ServerConfigExtra) Parse(extra string) error {
 		jsonBytes := []byte(extra)
 		err := json.Unmarshal(jsonBytes, s)
 		if err != nil {
-			err = common.JSONBytesParseError(err, jsonBytes)
+			err = nerrors.JSONBytesParseError(err, jsonBytes)
 			frpLog.Error(`failed to parse ServerConfigExtra: %v`, err)
 			return err
 		}
 		if len(s.Extra) > 0 {
 			err := json.Unmarshal(s.Extra, &s.unmarshaledExtra)
 			if err != nil {
-				err = common.JSONBytesParseError(err, jsonBytes)
+				err = nerrors.JSONBytesParseError(err, jsonBytes)
 				frpLog.Error(`failed to parse ServerConfigExtra.Extra: %v`, err)
 				return err
 			}

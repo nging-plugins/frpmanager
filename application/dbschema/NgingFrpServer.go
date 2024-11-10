@@ -241,10 +241,14 @@ func (a *NgingFrpServer) Struct_() string {
 }
 
 func (a *NgingFrpServer) Name_() string {
-	if a.base.Namer() != nil {
-		return WithPrefix(a.base.Namer()(a))
+	b := a
+	if b == nil {
+		b = &NgingFrpServer{}
 	}
-	return WithPrefix(factory.TableNamerGet(a.Short_())(a))
+	if b.base.Namer() != nil {
+		return WithPrefix(b.base.Namer()(b))
+	}
+	return WithPrefix(factory.TableNamerGet(b.Short_())(b))
 }
 
 func (a *NgingFrpServer) CPAFrom(source factory.Model) factory.Model {
@@ -662,7 +666,7 @@ func (a *NgingFrpServer) UpdateFields(mw func(db.Result) db.Result, kvset map[st
 	}
 	m := *a
 	m.FromRow(kvset)
-	var editColumns []string
+	editColumns := make([]string, 0, len(kvset))
 	for column := range kvset {
 		editColumns = append(editColumns, column)
 	}
@@ -732,7 +736,7 @@ func (a *NgingFrpServer) UpdatexFields(mw func(db.Result) db.Result, kvset map[s
 	}
 	m := *a
 	m.FromRow(kvset)
-	var editColumns []string
+	editColumns := make([]string, 0, len(kvset))
 	for column := range kvset {
 		editColumns = append(editColumns, column)
 	}
@@ -1044,6 +1048,9 @@ func (a *NgingFrpServer) AsMap(onlyFields ...string) param.Store {
 
 func (a *NgingFrpServer) FromRow(row map[string]interface{}) {
 	for key, value := range row {
+		if _, ok := value.(db.RawValue); ok {
+			continue
+		}
 		switch key {
 		case "id":
 			a.Id = param.AsUint(value)
@@ -1114,6 +1121,195 @@ func (a *NgingFrpServer) FromRow(row map[string]interface{}) {
 		case "updated":
 			a.Updated = param.AsUint(value)
 		}
+	}
+}
+
+func (a *NgingFrpServer) GetField(field string) interface{} {
+	switch field {
+	case "Id":
+		return a.Id
+	case "Name":
+		return a.Name
+	case "Disabled":
+		return a.Disabled
+	case "TcpMux":
+		return a.TcpMux
+	case "Addr":
+		return a.Addr
+	case "Port":
+		return a.Port
+	case "UdpPort":
+		return a.UdpPort
+	case "KcpPort":
+		return a.KcpPort
+	case "ProxyAddr":
+		return a.ProxyAddr
+	case "VhostHttpPort":
+		return a.VhostHttpPort
+	case "VhostHttpTimeout":
+		return a.VhostHttpTimeout
+	case "VhostHttpsPort":
+		return a.VhostHttpsPort
+	case "LogFile":
+		return a.LogFile
+	case "LogWay":
+		return a.LogWay
+	case "LogLevel":
+		return a.LogLevel
+	case "LogMaxDays":
+		return a.LogMaxDays
+	case "Token":
+		return a.Token
+	case "AuthTimeout":
+		return a.AuthTimeout
+	case "SubdomainHost":
+		return a.SubdomainHost
+	case "MaxPortsPerClient":
+		return a.MaxPortsPerClient
+	case "MaxPoolCount":
+		return a.MaxPoolCount
+	case "HeartBeatTimeout":
+		return a.HeartBeatTimeout
+	case "UserConnTimeout":
+		return a.UserConnTimeout
+	case "DashboardAddr":
+		return a.DashboardAddr
+	case "DashboardPort":
+		return a.DashboardPort
+	case "DashboardUser":
+		return a.DashboardUser
+	case "DashboardPwd":
+		return a.DashboardPwd
+	case "AllowPorts":
+		return a.AllowPorts
+	case "Extra":
+		return a.Extra
+	case "Plugins":
+		return a.Plugins
+	case "Uid":
+		return a.Uid
+	case "GroupId":
+		return a.GroupId
+	case "Created":
+		return a.Created
+	case "Updated":
+		return a.Updated
+	default:
+		return nil
+	}
+}
+
+func (a *NgingFrpServer) GetAllFieldNames() []string {
+	return []string{
+		"Id",
+		"Name",
+		"Disabled",
+		"TcpMux",
+		"Addr",
+		"Port",
+		"UdpPort",
+		"KcpPort",
+		"ProxyAddr",
+		"VhostHttpPort",
+		"VhostHttpTimeout",
+		"VhostHttpsPort",
+		"LogFile",
+		"LogWay",
+		"LogLevel",
+		"LogMaxDays",
+		"Token",
+		"AuthTimeout",
+		"SubdomainHost",
+		"MaxPortsPerClient",
+		"MaxPoolCount",
+		"HeartBeatTimeout",
+		"UserConnTimeout",
+		"DashboardAddr",
+		"DashboardPort",
+		"DashboardUser",
+		"DashboardPwd",
+		"AllowPorts",
+		"Extra",
+		"Plugins",
+		"Uid",
+		"GroupId",
+		"Created",
+		"Updated",
+	}
+}
+
+func (a *NgingFrpServer) HasField(field string) bool {
+	switch field {
+	case "Id":
+		return true
+	case "Name":
+		return true
+	case "Disabled":
+		return true
+	case "TcpMux":
+		return true
+	case "Addr":
+		return true
+	case "Port":
+		return true
+	case "UdpPort":
+		return true
+	case "KcpPort":
+		return true
+	case "ProxyAddr":
+		return true
+	case "VhostHttpPort":
+		return true
+	case "VhostHttpTimeout":
+		return true
+	case "VhostHttpsPort":
+		return true
+	case "LogFile":
+		return true
+	case "LogWay":
+		return true
+	case "LogLevel":
+		return true
+	case "LogMaxDays":
+		return true
+	case "Token":
+		return true
+	case "AuthTimeout":
+		return true
+	case "SubdomainHost":
+		return true
+	case "MaxPortsPerClient":
+		return true
+	case "MaxPoolCount":
+		return true
+	case "HeartBeatTimeout":
+		return true
+	case "UserConnTimeout":
+		return true
+	case "DashboardAddr":
+		return true
+	case "DashboardPort":
+		return true
+	case "DashboardUser":
+		return true
+	case "DashboardPwd":
+		return true
+	case "AllowPorts":
+		return true
+	case "Extra":
+		return true
+	case "Plugins":
+		return true
+	case "Uid":
+		return true
+	case "GroupId":
+		return true
+	case "Created":
+		return true
+	case "Updated":
+		return true
+	default:
+		return false
 	}
 }
 
@@ -1324,17 +1520,19 @@ func (a *NgingFrpServer) AsRow(onlyFields ...string) param.Store {
 }
 
 func (a *NgingFrpServer) ListPage(cond *db.Compounds, sorts ...interface{}) error {
-	_, err := pagination.NewLister(a, nil, func(r db.Result) db.Result {
-		return r.OrderBy(sorts...)
-	}, cond.And()).Paging(a.Context())
-	return err
+	return pagination.ListPage(a, cond, sorts...)
 }
 
 func (a *NgingFrpServer) ListPageAs(recv interface{}, cond *db.Compounds, sorts ...interface{}) error {
-	_, err := pagination.NewLister(a, recv, func(r db.Result) db.Result {
-		return r.OrderBy(sorts...)
-	}, cond.And()).Paging(a.Context())
-	return err
+	return pagination.ListPageAs(a, recv, cond, sorts...)
+}
+
+func (a *NgingFrpServer) ListPageByOffset(cond *db.Compounds, sorts ...interface{}) error {
+	return pagination.ListPageByOffset(a, cond, sorts...)
+}
+
+func (a *NgingFrpServer) ListPageByOffsetAs(recv interface{}, cond *db.Compounds, sorts ...interface{}) error {
+	return pagination.ListPageByOffsetAs(a, recv, cond, sorts...)
 }
 
 func (a *NgingFrpServer) BatchValidate(kvset map[string]interface{}) error {

@@ -223,10 +223,14 @@ func (a *NgingFrpUser) Struct_() string {
 }
 
 func (a *NgingFrpUser) Name_() string {
-	if a.base.Namer() != nil {
-		return WithPrefix(a.base.Namer()(a))
+	b := a
+	if b == nil {
+		b = &NgingFrpUser{}
 	}
-	return WithPrefix(factory.TableNamerGet(a.Short_())(a))
+	if b.base.Namer() != nil {
+		return WithPrefix(b.base.Namer()(b))
+	}
+	return WithPrefix(factory.TableNamerGet(b.Short_())(b))
 }
 
 func (a *NgingFrpUser) CPAFrom(source factory.Model) factory.Model {
@@ -464,7 +468,7 @@ func (a *NgingFrpUser) UpdateFields(mw func(db.Result) db.Result, kvset map[stri
 	}
 	m := *a
 	m.FromRow(kvset)
-	var editColumns []string
+	editColumns := make([]string, 0, len(kvset))
 	for column := range kvset {
 		editColumns = append(editColumns, column)
 	}
@@ -489,7 +493,7 @@ func (a *NgingFrpUser) UpdatexFields(mw func(db.Result) db.Result, kvset map[str
 	}
 	m := *a
 	m.FromRow(kvset)
-	var editColumns []string
+	editColumns := make([]string, 0, len(kvset))
 	for column := range kvset {
 		editColumns = append(editColumns, column)
 	}
@@ -675,6 +679,9 @@ func (a *NgingFrpUser) AsMap(onlyFields ...string) param.Store {
 
 func (a *NgingFrpUser) FromRow(row map[string]interface{}) {
 	for key, value := range row {
+		if _, ok := value.(db.RawValue); ok {
+			continue
+		}
 		switch key {
 		case "id":
 			a.Id = param.AsUint64(value)
@@ -709,6 +716,105 @@ func (a *NgingFrpUser) FromRow(row map[string]interface{}) {
 		case "updated":
 			a.Updated = param.AsUint(value)
 		}
+	}
+}
+
+func (a *NgingFrpUser) GetField(field string) interface{} {
+	switch field {
+	case "Id":
+		return a.Id
+	case "ServerId":
+		return a.ServerId
+	case "CustomerId":
+		return a.CustomerId
+	case "Uid":
+		return a.Uid
+	case "Username":
+		return a.Username
+	case "Password":
+		return a.Password
+	case "Banned":
+		return a.Banned
+	case "Bandwidth":
+		return a.Bandwidth
+	case "TrafficUsed":
+		return a.TrafficUsed
+	case "TrafficTotal":
+		return a.TrafficTotal
+	case "IpWhitelist":
+		return a.IpWhitelist
+	case "IpBlacklist":
+		return a.IpBlacklist
+	case "Start":
+		return a.Start
+	case "End":
+		return a.End
+	case "Created":
+		return a.Created
+	case "Updated":
+		return a.Updated
+	default:
+		return nil
+	}
+}
+
+func (a *NgingFrpUser) GetAllFieldNames() []string {
+	return []string{
+		"Id",
+		"ServerId",
+		"CustomerId",
+		"Uid",
+		"Username",
+		"Password",
+		"Banned",
+		"Bandwidth",
+		"TrafficUsed",
+		"TrafficTotal",
+		"IpWhitelist",
+		"IpBlacklist",
+		"Start",
+		"End",
+		"Created",
+		"Updated",
+	}
+}
+
+func (a *NgingFrpUser) HasField(field string) bool {
+	switch field {
+	case "Id":
+		return true
+	case "ServerId":
+		return true
+	case "CustomerId":
+		return true
+	case "Uid":
+		return true
+	case "Username":
+		return true
+	case "Password":
+		return true
+	case "Banned":
+		return true
+	case "Bandwidth":
+		return true
+	case "TrafficUsed":
+		return true
+	case "TrafficTotal":
+		return true
+	case "IpWhitelist":
+		return true
+	case "IpBlacklist":
+		return true
+	case "Start":
+		return true
+	case "End":
+		return true
+	case "Created":
+		return true
+	case "Updated":
+		return true
+	default:
+		return false
 	}
 }
 
@@ -829,17 +935,19 @@ func (a *NgingFrpUser) AsRow(onlyFields ...string) param.Store {
 }
 
 func (a *NgingFrpUser) ListPage(cond *db.Compounds, sorts ...interface{}) error {
-	_, err := pagination.NewLister(a, nil, func(r db.Result) db.Result {
-		return r.OrderBy(sorts...)
-	}, cond.And()).Paging(a.Context())
-	return err
+	return pagination.ListPage(a, cond, sorts...)
 }
 
 func (a *NgingFrpUser) ListPageAs(recv interface{}, cond *db.Compounds, sorts ...interface{}) error {
-	_, err := pagination.NewLister(a, recv, func(r db.Result) db.Result {
-		return r.OrderBy(sorts...)
-	}, cond.And()).Paging(a.Context())
-	return err
+	return pagination.ListPageAs(a, recv, cond, sorts...)
+}
+
+func (a *NgingFrpUser) ListPageByOffset(cond *db.Compounds, sorts ...interface{}) error {
+	return pagination.ListPageByOffset(a, cond, sorts...)
+}
+
+func (a *NgingFrpUser) ListPageByOffsetAs(recv interface{}, cond *db.Compounds, sorts ...interface{}) error {
+	return pagination.ListPageByOffsetAs(a, recv, cond, sorts...)
 }
 
 func (a *NgingFrpUser) BatchValidate(kvset map[string]interface{}) error {

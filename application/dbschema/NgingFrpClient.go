@@ -238,10 +238,14 @@ func (a *NgingFrpClient) Struct_() string {
 }
 
 func (a *NgingFrpClient) Name_() string {
-	if a.base.Namer() != nil {
-		return WithPrefix(a.base.Namer()(a))
+	b := a
+	if b == nil {
+		b = &NgingFrpClient{}
 	}
-	return WithPrefix(factory.TableNamerGet(a.Short_())(a))
+	if b.base.Namer() != nil {
+		return WithPrefix(b.base.Namer()(b))
+	}
+	return WithPrefix(factory.TableNamerGet(b.Short_())(b))
 }
 
 func (a *NgingFrpClient) CPAFrom(source factory.Model) factory.Model {
@@ -639,7 +643,7 @@ func (a *NgingFrpClient) UpdateFields(mw func(db.Result) db.Result, kvset map[st
 	}
 	m := *a
 	m.FromRow(kvset)
-	var editColumns []string
+	editColumns := make([]string, 0, len(kvset))
 	for column := range kvset {
 		editColumns = append(editColumns, column)
 	}
@@ -704,7 +708,7 @@ func (a *NgingFrpClient) UpdatexFields(mw func(db.Result) db.Result, kvset map[s
 	}
 	m := *a
 	m.FromRow(kvset)
-	var editColumns []string
+	editColumns := make([]string, 0, len(kvset))
 	for column := range kvset {
 		editColumns = append(editColumns, column)
 	}
@@ -998,6 +1002,9 @@ func (a *NgingFrpClient) AsMap(onlyFields ...string) param.Store {
 
 func (a *NgingFrpClient) FromRow(row map[string]interface{}) {
 	for key, value := range row {
+		if _, ok := value.(db.RawValue); ok {
+			continue
+		}
 		switch key {
 		case "id":
 			a.Id = param.AsUint(value)
@@ -1062,6 +1069,180 @@ func (a *NgingFrpClient) FromRow(row map[string]interface{}) {
 		case "updated":
 			a.Updated = param.AsUint(value)
 		}
+	}
+}
+
+func (a *NgingFrpClient) GetField(field string) interface{} {
+	switch field {
+	case "Id":
+		return a.Id
+	case "Name":
+		return a.Name
+	case "Disabled":
+		return a.Disabled
+	case "ServerAddr":
+		return a.ServerAddr
+	case "ServerPort":
+		return a.ServerPort
+	case "HttpProxy":
+		return a.HttpProxy
+	case "PoolCount":
+		return a.PoolCount
+	case "TcpMux":
+		return a.TcpMux
+	case "User":
+		return a.User
+	case "DnsServer":
+		return a.DnsServer
+	case "LoginFailExit":
+		return a.LoginFailExit
+	case "Protocol":
+		return a.Protocol
+	case "HeartbeatInterval":
+		return a.HeartbeatInterval
+	case "HeartbeatTimeout":
+		return a.HeartbeatTimeout
+	case "LogFile":
+		return a.LogFile
+	case "LogWay":
+		return a.LogWay
+	case "LogLevel":
+		return a.LogLevel
+	case "LogMaxDays":
+		return a.LogMaxDays
+	case "Token":
+		return a.Token
+	case "AdminAddr":
+		return a.AdminAddr
+	case "AdminPort":
+		return a.AdminPort
+	case "AdminUser":
+		return a.AdminUser
+	case "AdminPwd":
+		return a.AdminPwd
+	case "Start":
+		return a.Start
+	case "Metas":
+		return a.Metas
+	case "Extra":
+		return a.Extra
+	case "Uid":
+		return a.Uid
+	case "GroupId":
+		return a.GroupId
+	case "Type":
+		return a.Type
+	case "Created":
+		return a.Created
+	case "Updated":
+		return a.Updated
+	default:
+		return nil
+	}
+}
+
+func (a *NgingFrpClient) GetAllFieldNames() []string {
+	return []string{
+		"Id",
+		"Name",
+		"Disabled",
+		"ServerAddr",
+		"ServerPort",
+		"HttpProxy",
+		"PoolCount",
+		"TcpMux",
+		"User",
+		"DnsServer",
+		"LoginFailExit",
+		"Protocol",
+		"HeartbeatInterval",
+		"HeartbeatTimeout",
+		"LogFile",
+		"LogWay",
+		"LogLevel",
+		"LogMaxDays",
+		"Token",
+		"AdminAddr",
+		"AdminPort",
+		"AdminUser",
+		"AdminPwd",
+		"Start",
+		"Metas",
+		"Extra",
+		"Uid",
+		"GroupId",
+		"Type",
+		"Created",
+		"Updated",
+	}
+}
+
+func (a *NgingFrpClient) HasField(field string) bool {
+	switch field {
+	case "Id":
+		return true
+	case "Name":
+		return true
+	case "Disabled":
+		return true
+	case "ServerAddr":
+		return true
+	case "ServerPort":
+		return true
+	case "HttpProxy":
+		return true
+	case "PoolCount":
+		return true
+	case "TcpMux":
+		return true
+	case "User":
+		return true
+	case "DnsServer":
+		return true
+	case "LoginFailExit":
+		return true
+	case "Protocol":
+		return true
+	case "HeartbeatInterval":
+		return true
+	case "HeartbeatTimeout":
+		return true
+	case "LogFile":
+		return true
+	case "LogWay":
+		return true
+	case "LogLevel":
+		return true
+	case "LogMaxDays":
+		return true
+	case "Token":
+		return true
+	case "AdminAddr":
+		return true
+	case "AdminPort":
+		return true
+	case "AdminUser":
+		return true
+	case "AdminPwd":
+		return true
+	case "Start":
+		return true
+	case "Metas":
+		return true
+	case "Extra":
+		return true
+	case "Uid":
+		return true
+	case "GroupId":
+		return true
+	case "Type":
+		return true
+	case "Created":
+		return true
+	case "Updated":
+		return true
+	default:
+		return false
 	}
 }
 
@@ -1257,17 +1438,19 @@ func (a *NgingFrpClient) AsRow(onlyFields ...string) param.Store {
 }
 
 func (a *NgingFrpClient) ListPage(cond *db.Compounds, sorts ...interface{}) error {
-	_, err := pagination.NewLister(a, nil, func(r db.Result) db.Result {
-		return r.OrderBy(sorts...)
-	}, cond.And()).Paging(a.Context())
-	return err
+	return pagination.ListPage(a, cond, sorts...)
 }
 
 func (a *NgingFrpClient) ListPageAs(recv interface{}, cond *db.Compounds, sorts ...interface{}) error {
-	_, err := pagination.NewLister(a, recv, func(r db.Result) db.Result {
-		return r.OrderBy(sorts...)
-	}, cond.And()).Paging(a.Context())
-	return err
+	return pagination.ListPageAs(a, recv, cond, sorts...)
+}
+
+func (a *NgingFrpClient) ListPageByOffset(cond *db.Compounds, sorts ...interface{}) error {
+	return pagination.ListPageByOffset(a, cond, sorts...)
+}
+
+func (a *NgingFrpClient) ListPageByOffsetAs(recv interface{}, cond *db.Compounds, sorts ...interface{}) error {
+	return pagination.ListPageByOffsetAs(a, recv, cond, sorts...)
 }
 
 func (a *NgingFrpClient) BatchValidate(kvset map[string]interface{}) error {

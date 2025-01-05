@@ -88,7 +88,7 @@
 								<td>{{$v.Id}}</td>
 								<td>
 								<div class="checkbox checkbox-primary no-margin-y">
-									<input type="checkbox" id="checkbox-disabled-{{$k}}" value="N" class="switch-disabled" data-id="{{$v.Id}}"{{if eq $v.Disabled "N"}} checked="checked"{{end}} /> <label for="checkbox-disabled-{{$k}}">{{"启用"|$.T}}</label>
+									<input type="checkbox" id="checkbox-disabled-{{$k}}" value="N" class="switch-disabled" data-id="{{$v.Id}}"{{if eq $v.Disabled `N`}} checked="checked"{{end}} /> <label for="checkbox-disabled-{{$k}}">{{"启用"|$.T}}</label>
 								</div>
 								</td>
 								<td id="frp-server-status-{{$v.Id}}">
@@ -116,13 +116,13 @@
 								<td>{{$v.Plugins}}</td>
 								<td>{{if gt $v.Updated 0}}{{(Date $v.Updated).Format "2006-01-02 15:04:05"}}{{else}}{{(Date $v.Created).Format "2006-01-02 15:04:05"}}{{end}}</td>
 								<td>
-									<a href="javascript:;" data-url="{{BackendURL}}/frp/server_log?id={{$v.Id}}" title="{{"日志"|$.T}}" data-toggle="tooltip" onclick="App.logShow(this,true);">{{"日志"|$.T}}</a>
+									<a href="javascript:;" data-url="{{BackendURL}}/frp/server_log?id={{$v.Id}}" title="{{`日志`|$.T}}" data-toggle="tooltip" onclick="App.logShow(this,true);">{{"日志"|$.T}}</a>
 								</td>
 								<td class="text-right">
-									<a id="frp-server-chart-{{$v.Id}}" class="label label-info{{if not $v.Running}} hidden{{end}}" href="{{BackendURL}}/frp/dashboard/server/{{$v.Id}}" target="_blank" title="{{"统计"|$.T}}" data-toggle="tooltip"><i class="fa fa-bar-chart-o"></i></a>
-									<a class="label label-default" href="{{BackendURL}}/frp/server_add?copyId={{$v.Id}}" title="{{"复制"|$.T}}" data-toggle="tooltip"><i class="fa fa-copy"></i></a>
-									<a class="label label-success" href="{{BackendURL}}/frp/server_edit?id={{$v.Id}}" title="{{"编辑"|$.T}}" data-toggle="tooltip"><i class="fa fa-pencil"></i></a>
-									<a class="label label-danger" href="{{BackendURL}}/frp/server_delete?id={{$v.Id}}" onclick="return confirm('{{"真的要删除吗？"|$.T}}');" title="{{"删除"|$.T}}" data-toggle="tooltip"><i class="fa fa-times"></i></a>
+									<a id="frp-server-chart-{{$v.Id}}" class="label label-info{{if not $v.Running}} hidden{{end}}" href="{{BackendURL}}/frp/dashboard/server/{{$v.Id}}" target="_blank" title="{{`统计`|$.T}}" data-toggle="tooltip"><i class="fa fa-bar-chart-o"></i></a>
+									<a class="label label-default" href="{{BackendURL}}/frp/server_add?copyId={{$v.Id}}" title="{{`复制`|$.T}}" data-toggle="tooltip"><i class="fa fa-copy"></i></a>
+									<a class="label label-success" href="{{BackendURL}}/frp/server_edit?id={{$v.Id}}" title="{{`编辑`|$.T}}" data-toggle="tooltip"><i class="fa fa-pencil"></i></a>
+									<a class="label label-danger" href="{{BackendURL}}/frp/server_delete?id={{$v.Id}}" onclick="return confirm('{{`真的要删除吗？`|$.T}}');" title="{{`删除`|$.T}}" data-toggle="tooltip"><i class="fa fa-times"></i></a>
 								</td>
 							</tr>
 							{{end}}

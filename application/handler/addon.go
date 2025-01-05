@@ -8,6 +8,7 @@ import (
 	"github.com/webx-top/echo"
 
 	"github.com/coscms/webcore/library/common"
+	"github.com/nging-plugins/frpmanager/application/library/frp"
 )
 
 var regexNumEnd = regexp.MustCompile(`_[\d]+$`)
@@ -48,4 +49,10 @@ func setAddonFunc(ctx echo.Context) {
 	ctx.SetFunc(`Key`, formKey)
 	ipv4, _ := common.GetLocalIP()
 	ctx.Set(`localIP`, ipv4)
+	ctx.SetFunc(`pluginName`, func(v string) string {
+		v = numberSuffixRegexp.ReplaceAllString(v, ``)
+		return frp.Plugins.Get(v)
+	})
 }
+
+var numberSuffixRegexp = regexp.MustCompile(`_[\d]+$`)

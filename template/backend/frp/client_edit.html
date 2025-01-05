@@ -290,14 +290,15 @@
                       </div>
 {{range $v := $.Stored.sections}}
 <div class="form-group mapping-addon" data-map-type="{{$v.Addon}}" id="addon-mapping-{{$v.Section}}">
-  <label class="col-sm-2 control-label">{{$v.Section}}</label>
+  {{- $title := call $.Func.pluginName $v.Section | $.T -}}
+  <label class="col-sm-2 control-label">{{$title}}<br /><small>({{$v.Section}})</small></label>
   <div class="col-sm-9">
     <div class="fieldset bg-fc">
       {{$.Fetch (printf "frp/client/form/%s" $v.Addon) $v.Section}}
     </div>
   </div>
   <div class="col-sm-1">
-  <a href="javascript:;" class="label label-danger extra-page-remove" onclick="removeMapping('{{$v.Section}}');" data-toggle="tooltip" title="{{`删除`|$.T}}"><i class="fa fa-times"></i></a>
+  <a href="javascript:;" class="label label-danger extra-page-remove" onclick="removeMapping('{{$v.Section}}','{{$title}}');" data-toggle="tooltip" title="{{`删除`|$.T}}"><i class="fa fa-times"></i></a>
   </div>
 </div>
 {{end}}
@@ -331,12 +332,12 @@
 </script>
 <script type="text/template" id="tmplMapping">
 <div class="form-group mapping-addon" data-map-type="{mapType}" id="addon-mapping-{section}">
-    <label class="col-sm-2 control-label">{section}</label>
+    <label class="col-sm-2 control-label">{title}<br /><small>({section})</small></label>
     <div class="col-sm-9">
       <div class="fieldset bg-fc">{content}</div>
     </div>
     <div class="col-sm-1">
-    <a href="javascript:;" class="label label-danger extra-page-remove" onclick="removeMapping('{section}');" data-toggle="tooltip" title="{{`删除`|$.T}}"><i class="fa fa-times"></i></a>
+    <a href="javascript:;" class="label label-danger extra-page-remove" onclick="removeMapping('{section}','{title}');" data-toggle="tooltip" title="{{`删除`|$.T}}"><i class="fa fa-times"></i></a>
     </div>
 </div>
 </script>
@@ -348,14 +349,14 @@ function addKVs(obj,k,v){
   tmpl=tmpl.replace(/\{v\}/g,v);
   $(obj).parent().before(tmpl);
 }
-function removeMapping(section){
+function removeMapping(section,title){
   if(!confirm('{{"确定删除“{section}”？"|$.T}}'.replace(/\{section\}/,section)))return false;;
   $('#addon-mapping-'+section).remove();
   return true;
 }
 $(function(){
 $('#btn-adding-mapping > li > a[data-map-type]').off().on('click',function(){
-  var mapType=$(this).data('map-type'),
+  var mapType=$(this).data('map-type'),title=$(this).text(),
   index=$('.mapping-addon[data-map-type="'+mapType+'"]').length;
   var section=mapType+'_'+index;
   while($('#addon-mapping-'+section).length>0) {
@@ -365,6 +366,7 @@ $('#btn-adding-mapping > li > a[data-map-type]').off().on('click',function(){
   $.get(BACKEND_URL+'/frp/addon_form',{addon:mapType,section:section},function(r){
     var html=$('#tmplMapping').html();
     html=html.replace(/\{mapType\}/g,mapType);
+    html=html.replace(/\{title\}/g,title);
     html=html.replace(/\{section\}/g,section);
     html=html.replace(/\{content\}/g,r);
     $('.mapping-addon:last').after(html);

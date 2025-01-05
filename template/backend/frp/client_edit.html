@@ -291,7 +291,9 @@
 {{range $v := $.Stored.sections}}
 <div class="form-group mapping-addon" data-map-type="{{$v.Addon}}" id="addon-mapping-{{$v.Section}}">
   {{- $title := call $.Func.pluginName $v.Section | $.T -}}
-  <label class="col-sm-2 control-label">{{$title}}<br /><small>({{$v.Section}})</small></label>
+  <label class="col-sm-2 control-label">{{$title}}
+    <small class="normal">({{$v.Section}})</small>
+  </label>
   <div class="col-sm-9">
     <div class="fieldset bg-fc">
       {{$.Fetch (printf "frp/client/form/%s" $v.Addon) $v.Section}}
@@ -332,7 +334,9 @@
 </script>
 <script type="text/template" id="tmplMapping">
 <div class="form-group mapping-addon" data-map-type="{mapType}" id="addon-mapping-{section}">
-    <label class="col-sm-2 control-label">{title}<br /><small>({section})</small></label>
+    <label class="col-sm-2 control-label">{title}
+      <small class="normal">({section})</small>
+    </label>
     <div class="col-sm-9">
       <div class="fieldset bg-fc">{content}</div>
     </div>

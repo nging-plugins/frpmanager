@@ -93,9 +93,9 @@
 								</td>
 								<td id="frp-server-status-{{$v.Id}}">
 									{{if $v.Running}}
-									<span class="status-run fa fa-play text-success"> {{"运行中"|$.T}}</span>
+									<span class="status-run text-success"><i class="fa fa-play"></i> {{"运行中"|$.T}}</span>
 									{{else}}
-									<span class="status-run fa fa-stop text-danger"> {{"已停止"|$.T}}</span>
+									<span class="status-run text-danger"><i class="fa fa-stop"></i> {{"已停止"|$.T}}</span>
 									{{end}}
 								</td>
 								<td>{{$v.Name}}</td>
@@ -167,11 +167,11 @@ $(function(){
 		var id = $(this).data('id');
 		switch(r.Data.status){
 			case 'started': 
-				$('#frp-server-status-'+id).html('<span class="status-run fa fa-play text-success"> {{"运行中"|$.T}}</span>');
+				$('#frp-server-status-'+id).html('<span class="status-run text-success"><i class="fa fa-play"></i> {{"运行中"|$.T}}</span>');
 				$('#frp-server-chart-'+id).removeClass('hidden');
 				break;
 			case 'stopped': 
-				$('#frp-server-status-'+id).html('<span class="status-run fa fa-stop text-danger"> {{"已停止"|$.T}}</span>');
+				$('#frp-server-status-'+id).html('<span class="status-run text-danger"><i class="fa fa-stop"></i> {{"已停止"|$.T}}</span>');
 				$('#frp-server-chart-'+id).addClass('hidden');
 				break;
 		}

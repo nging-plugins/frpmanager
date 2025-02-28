@@ -21,8 +21,7 @@ package model
 import (
 	"errors"
 	"fmt"
-	"net"
-	"strings"
+	"net/netip"
 	"time"
 
 	"github.com/webx-top/com"
@@ -31,9 +30,9 @@ import (
 	"github.com/webx-top/echo/code"
 
 	"github.com/coscms/webcore/library/common"
-	"github.com/coscms/webcore/library/ipsimplefilter"
 
 	"github.com/nging-plugins/frpmanager/application/dbschema"
+	"github.com/nging-plugins/frpmanager/application/library/ipfilter"
 )
 
 var (
@@ -86,30 +85,12 @@ func (f *FrpUser) CheckPasswd(serverID uint, username string, password string) e
 		return ErrBannedUser
 	}
 	ipAddr := f.Context().RealIP()
-	ip := net.ParseIP(ipAddr)
-	if len(f.IpWhitelist) > 0 {
-		for _, row := range strings.Split(f.IpWhitelist, "\n") {
-			row = strings.TrimSpace(row)
-			if len(row) == 0 {
-				continue
-			}
-			r := ipsimplefilter.New(row)
-			if !r.Contains(ip) {
-				return fmt.Errorf("%w: %v", ErrIPAddressIsBlocked, ipAddr)
-			}
-		}
+	ip, err := netip.ParseAddr(ipAddr)
+	if err != nil {
+		return fmt.Errorf(`Invalid IP: %v`, ipAddr)
 	}
-	if len(f.IpBlacklist) > 0 {
-		for _, row := range strings.Split(f.IpBlacklist, "\n") {
-			row = strings.TrimSpace(row)
-			if len(row) == 0 {
-				continue
-			}
-			r := ipsimplefilter.New(row)
-			if r.Contains(ip) {
-				return fmt.Errorf("%w: %v", ErrIPAddressIsBlocked, ipAddr)
-			}
-		}
+	if !ipfilter.IsAllowed(f.Context(), f.NgingFrpUser, ip) {
+		return fmt.Errorf("%w: %v", ErrIPAddressIsBlocked, ipAddr)
 	}
 	now := time.Now().Unix()
 	if f.Start > 0 && int64(f.Start) > now {

@@ -28,6 +28,7 @@ import (
 	"github.com/webx-top/echo/code"
 	"github.com/webx-top/echo/formfilter"
 
+	"github.com/nging-plugins/frpmanager/application/library/ipfilter"
 	"github.com/nging-plugins/frpmanager/application/model"
 )
 
@@ -62,14 +63,24 @@ func AccountAdd(ctx echo.Context) error {
 		} else {
 			err = ctx.MustBind(m.NgingFrpUser, accountFormFilter())
 		}
-		if err == nil {
-			m.Uid = user.Id
-			_, err = m.Add()
-			if err == nil {
-				common.SendOk(ctx, ctx.T(`操作成功`))
-				return ctx.Redirect(backend.URLFor(`/frp/account`))
-			}
+		if err != nil {
+			goto END
 		}
+		err = ipfilter.Validate(ctx, m.IpBlacklist)
+		if err != nil {
+			goto END
+		}
+		err = ipfilter.Validate(ctx, m.IpWhitelist)
+		if err != nil {
+			goto END
+		}
+		m.Uid = user.Id
+		_, err = m.Add()
+		if err != nil {
+			goto END
+		}
+		common.SendOk(ctx, ctx.T(`操作成功`))
+		return ctx.Redirect(backend.URLFor(`/frp/account`))
 	} else {
 		id := ctx.Formx(`copyId`).Uint()
 		if id > 0 {
@@ -94,6 +105,8 @@ func AccountAdd(ctx echo.Context) error {
 			}
 		}
 	}
+
+END:
 	ctx.Set(`activeURL`, `/frp/account`)
 	return ctx.Render(`frp/account_edit`, err)
 }
@@ -119,15 +132,25 @@ func AccountEdit(ctx echo.Context) error {
 		} else {
 			err = ctx.MustBind(m.NgingFrpUser, accountFormFilter(formfilter.Exclude(`Created`)))
 		}
-
-		if err == nil {
-			m.Id = id
-			err = m.Edit(nil, db.Cond{`id`: id})
-			if err == nil {
-				common.SendOk(ctx, ctx.T(`操作成功`))
-				return ctx.Redirect(backend.URLFor(`/frp/account`))
-			}
+		if err != nil {
+			goto END
 		}
+		err = ipfilter.Validate(ctx, m.IpBlacklist)
+		if err != nil {
+			goto END
+		}
+		err = ipfilter.Validate(ctx, m.IpWhitelist)
+		if err != nil {
+			goto END
+		}
+		m.Id = id
+		err = m.Edit(nil, db.Cond{`id`: id})
+		if err != nil {
+			goto END
+		}
+		ipfilter.Factory.DeleteUser(id)
+		common.SendOk(ctx, ctx.T(`操作成功`))
+		return ctx.Redirect(backend.URLFor(`/frp/account`))
 	} else {
 		echo.StructToForm(ctx, m.NgingFrpUser, ``, func(topName, fieldName string) string {
 			if topName == `` && fieldName == `Password` {
@@ -146,15 +169,17 @@ func AccountEdit(ctx echo.Context) error {
 		ctx.Request().Form().Set(`end`, endDate)
 	}
 
+END:
 	ctx.Set(`activeURL`, `/frp/account`)
 	return ctx.Render(`frp/account_edit`, err)
 }
 
 func AccountDelete(ctx echo.Context) error {
-	id := ctx.Formx(`id`).Uint()
+	id := ctx.Formx(`id`).Uint64()
 	m := model.NewFrpUser(ctx)
 	err := m.Delete(nil, db.Cond{`id`: id})
 	if err == nil {
+		ipfilter.Factory.DeleteUser(id)
 		common.SendOk(ctx, ctx.T(`操作成功`))
 	} else {
 		common.SendFail(ctx, err.Error())

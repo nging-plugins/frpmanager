@@ -6,7 +6,6 @@ import (
 	plugin "github.com/admpub/frp/pkg/plugin/server"
 	"github.com/admpub/log"
 	"github.com/webx-top/db"
-	"github.com/webx-top/db/lib/factory/mysql"
 	"github.com/webx-top/echo"
 	"github.com/webx-top/echo/param"
 
@@ -66,7 +65,13 @@ func OnChangeBackendURL(ctx echo.Context) error {
 	c := dbschema.NewNgingFrpServer(ctx)
 	_, err := c.ListByOffset(nil, nil, 0, -1, db.And(
 		db.Cond{`disabled`: `N`},
-		mysql.FindInSet(`plugins`, `multiuser_login`),
+		db.Or(
+			//mysql.FindInSet(`plugins`, `multiuser_login`) //unsupport sqlite3
+			db.Cond{`plugins`: `multiuser_login`},
+			db.Cond{`plugins`: db.Like(`multiuser_login,%`)},
+			db.Cond{`plugins`: db.Like(`%,multiuser_login`)},
+			db.Cond{`plugins`: db.Like(`%,multiuser_login,%`)},
+		),
 	))
 	if err != nil {
 		return err

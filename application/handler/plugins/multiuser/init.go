@@ -2,6 +2,7 @@ package multiuser
 
 import (
 	"strconv"
+	"strings"
 
 	plugin "github.com/admpub/frp/pkg/plugin/server"
 	"github.com/admpub/log"
@@ -26,14 +27,14 @@ var (
 )
 
 func init() {
-	register(`multiuser_login`, `多用户登录`, func() plugin.HTTPPluginOptions {
+	register(`multiuser_login`, echo.T(`多用户登录`), func() plugin.HTTPPluginOptions {
 		p := definePlugin
-		backendURL := config.Setting(`base`).String(`backendURL`)
+		backendURL := strings.TrimSuffix(config.Setting(`base`).String(`backendURL`), `/`)
 		if len(backendURL) > 0 {
 			p.Addr = backendURL
 		} else {
-			if config.FromCLI().Port != config.DefaultPort {
-				p.Addr = `127.0.0.1:` + strconv.Itoa(config.FromCLI().Port)
+			if port := config.FromCLI().Port; port != config.DefaultPort {
+				p.Addr = `127.0.0.1:` + strconv.Itoa(port)
 			}
 		}
 		return p

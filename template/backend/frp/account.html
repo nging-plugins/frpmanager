@@ -47,27 +47,29 @@
 										<td>{{$v.Username}}</td>
 										<td>{{if $v.Server}}{{$v.Server.Name}}{{else}}<code>{{`不限`|$.T}}</code>{{end}}</td>
 										<td>
-											{{if and (gt $v.Start 0) (gt $v.End 0)}}
+											{{- if and (gt $v.Start 0) (gt $v.End 0) -}}
 											{{$v.Start|DateFormat "2006-01-02 15:04:05"}} ~ {{$v.End|DateFormat "2006-01-02 15:04:05"}}
-											{{else if gt $v.Start 0}}
+											{{- else if gt $v.Start 0 -}}
 											{{$v.Start|DateFormat "2006-01-02 15:04:05"}}{{"以后"|$.T}}
-											{{else if gt $v.End 0}}
+											{{- else if gt $v.End 0 -}}
 											{{$v.End|DateFormat "2006-01-02 15:04:05"}}{{"以前"|$.T}}
-											{{else}}
+											{{- else -}}
 											{{"不限制"|$.T}}
-											{{end}}
+											{{- end -}}
 										</td>
-                                        {{if eq $v.Banned "Y"}}
-										<td class="color-danger">{{"禁用"|$.T}}</td>
-                                        {{else}}
-                                        <td class="color-success">{{"有效"|$.T}}</td>
-                                        {{end}}
+										<td>
+                                        {{- if eq $v.Banned "Y" -}}
+										<span class="color-danger">{{"禁用"|$.T}}</span>
+                                        {{- else -}}
+                                        <span class="color-success">{{"有效"|$.T}}</span>
+                                        {{- end -}}
+										</td>
                                         <td>{{$v.CustomerId}}</td>
                                         <td>{{$v.Uid}}</td>
 										<td>{{(Date $v.Created).Format "2006-01-02 15:04:05"}}</td>
 										<td>{{if gt $v.Updated 0}}{{(Date $v.Updated).Format "2006-01-02 15:04:05"}}{{end}}</td>
 										<td class="text-center label-group">
-										<a class="label label-default" href="{{BackendURL}}/frp/account_add?copyId={{$v.Id}}" title="{{"复制"|$.T}}"><i class="fa fa-copy"></i></a>
+										<a class="label label-default" href="{{BackendURL}}/frp/account_add?copyId={{$v.Id}}" title="{{`复制`|$.T}}"><i class="fa fa-copy"></i></a>
 										<a class="label label-success" href="{{BackendURL}}/frp/account_edit?id={{$v.Id}}"><i class="fa fa-pencil"></i></a>
 										<a class="label label-danger" href="{{BackendURL}}/frp/account_delete?id={{$v.Id}}" onclick="return confirm('{{`真的要删除吗？`|$.T}}');"><i class="fa fa-times"></i></a>
 										</td>
